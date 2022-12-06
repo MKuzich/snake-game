@@ -1,0 +1,156 @@
+import { useState, useEffect } from 'react';
+import { Cell } from 'components/Cell/Cell';
+import { Board } from './GameBoard.styled';
+
+export const GameBoard = ({ rows, cols, increaseScore, score }) => {
+  const [isBegin, setIsBegin] = useState(true);
+  const [grid, setGrid] = useState([]);
+  const [food, setFood] = useState(null);
+  const [head, setHead] = useState({
+    row: Math.floor((rows - 1) / 2),
+    col: Math.floor((cols - 1) / 2),
+  });
+  const [body, setBody] = useState([]);
+  const [snakeLength, setSnakeLength] = useState(0);
+  const [direction, setDirection] = useState('right');
+  const [tickTime, setTickTime] = useState(500);
+  const [level, setLevel] = useState(1);
+
+  // Movement speed increasing
+  useEffect(() => {
+    console.log(score);
+    if (Math.floor(score / 50) === level) {
+      setLevel(level + 1);
+      setTickTime(tickTime * 0.9);
+    }
+  }, [level, score, tickTime]);
+
+  // Food creating
+  useEffect(() => {
+    const getRandomFood = () => {
+      let foodScore = Math.random();
+      if (foodScore > 0.9) {
+        foodScore = 10;
+      } else if (foodScore > 0.6) {
+        foodScore = 5;
+      } else {
+        foodScore = 1;
+      }
+      return {
+        row: Math.floor(Math.random() * rows),
+        col: Math.floor(Math.random() * cols),
+        score: foodScore,
+      };
+    };
+    let newFood = getRandomFood();
+    if (isBegin) {
+      if (newFood.row === head.row && newFood.col === head.col) {
+        newFood = getRandomFood();
+      }
+      setFood(newFood);
+      setIsBegin(false);
+    }
+
+    if (food && head.row === food.row && head.col === food.col) {
+      setSnakeLength(snakeLength + 1);
+      increaseScore(food.score);
+      if (newFood.row === head.row && newFood.col === head.col) {
+        newFood = getRandomFood();
+      }
+      setFood(newFood);
+    }
+  }, [head, food, snakeLength, isBegin, rows, cols, increaseScore]);
+
+  // Grid creating
+  useEffect(() => {
+    const gridArray = [];
+    for (let row = 0; row < rows; row += 1) {
+      for (let col = 0; col < cols; col += 1) {
+        let status = 'cell';
+        if (food && row === food.row && col === food.col) {
+          status = 'food';
+        } else if (body.some(itm => row === itm?.row && col === itm?.col)) {
+          status = 'body';
+        } else if (row === head.row && col === head.col) {
+          status = 'head';
+        } else {
+          status = 'cell';
+        }
+        gridArray.push({
+          row,
+          col,
+          status,
+        });
+      }
+    }
+    setGrid(gridArray);
+  }, [rows, cols, food, head, body]);
+
+  // Movement creating
+  useEffect(() => {
+    const NextCellCalculate = () => {
+      const newCell = {};
+      if (direction === 'right') {
+        const newCol = head.col + 1;
+        newCell.row = head.row;
+        newCell.col = newCol === cols ? 0 : newCol;
+      } else if (direction === 'left') {
+        const newCol = head.col - 1;
+        newCell.row = head.row;
+        newCell.col = newCol < 0 ? cols - 1 : newCol;
+      } else if (direction === 'top') {
+        const newRow = head.row - 1;
+        newCell.row = newRow < 0 ? rows - 1 : newRow;
+        newCell.col = head.col;
+      } else if (direction === 'bottom') {
+        const newRow = head.row + 1;
+        newCell.row = newRow === rows ? 0 : newRow;
+        newCell.col = head.col;
+      }
+
+      let newBody = [];
+      if (snakeLength === 0) {
+        newBody = [];
+      } else if (snakeLength > body.length) {
+        newBody = [...body, { row: head.row, col: head.col }];
+      } else if (snakeLength === body.length) {
+        const shiftedBody = body;
+        shiftedBody.shift();
+        newBody = [...shiftedBody, { row: head.row, col: head.col }];
+      }
+
+      setHead(newCell);
+      setBody(newBody);
+    };
+    const tickInterval = setInterval(() => NextCellCalculate(), tickTime);
+
+    return () => clearInterval(tickInterval);
+  }, [body, cols, direction, head, rows, snakeLength, tickTime]);
+
+  // Controls
+  useEffect(() => {
+    const handleArrowsKeys = e => {
+      if (e.code === 'ArrowUp' && direction !== 'bottom') {
+        setDirection('top');
+      } else if (e.code === 'ArrowRight' && direction !== 'left') {
+        setDirection('right');
+      } else if (e.code === 'ArrowDown' && direction !== 'top') {
+        setDirection('bottom');
+      } else if (e.code === 'ArrowLeft' && direction !== 'right') {
+        setDirection('left');
+      }
+    };
+    window.addEventListener('keydown', handleArrowsKeys);
+    return () => {
+      window.removeEventListener('keydown', handleArrowsKeys);
+    };
+  }, []);
+
+  return (
+    <Board>
+      {grid.map(({ row, col, status }) => (
+        <Cell key={`${row}-${col}`} status={status} />
+      ))}
+    </Board>
+  );
+};
