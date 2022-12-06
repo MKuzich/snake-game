@@ -13,10 +13,6 @@ export const Title = styled.h2`
   font-size: 20px;
 `;
 
-export const InfoWrapper = styled.div``;
-
-export const Head = styled.div``;
-
 export const Item = styled.li`
   color: #f2f5f3;
   font-size: 18px;
@@ -31,5 +27,3 @@ export const Name = styled.span`
   font-weight: 700;
   width: 180px;
 `;
-
-export const Score = styled.span``;

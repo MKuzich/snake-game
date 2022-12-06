@@ -37,6 +37,7 @@ export const Input = styled.input`
   :hover,
   :focus {
     outline: none;
+    background-color: #cfd3d4;
   }
 `;
 

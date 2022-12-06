@@ -11,6 +11,7 @@ export const App = () => {
   const [score, setScore] = useState(0);
   const [nickname, setNickname] = useState('Player');
   const [isActive, setIsActive] = useState(true);
+  const [isPaused, setIsPaused] = useState(true);
   const [showModal, setShowModal] = useState(true);
 
   const changeScore = value => {
@@ -32,9 +33,15 @@ export const App = () => {
           isActive={isActive}
           handleActive={handleActive}
           nickname={nickname}
+          isPaused={isPaused}
         />
         <SideBar>
-          <TitleBar nickname={nickname} score={score} />
+          <TitleBar
+            nickname={nickname}
+            score={score}
+            isPaused={isPaused}
+            setIsPaused={setIsPaused}
+          />
           <TopPlayers />
         </SideBar>
       </Container>
@@ -42,6 +49,7 @@ export const App = () => {
         <NicknameModal
           closeModal={() => setShowModal(null)}
           setNickname={setNickname}
+          setIsPaused={setIsPaused}
         />
       )}
     </>

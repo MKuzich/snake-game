@@ -11,7 +11,7 @@ import { createPortal } from 'react-dom';
 
 const modalRoot = document.querySelector('#modal-root');
 
-export const NicknameModal = ({ closeModal, setNickname }) => {
+export const NicknameModal = ({ closeModal, setNickname, setIsPaused }) => {
   useEffect(() => {
     const handleKeyDown = e => {
       if (e.code === 'Escape') {
@@ -33,6 +33,7 @@ export const NicknameModal = ({ closeModal, setNickname }) => {
   const onSubmitHandler = e => {
     e.preventDefault();
     setNickname(e.target.elements.nickname.value);
+    setIsPaused(false);
     closeModal();
   };
 

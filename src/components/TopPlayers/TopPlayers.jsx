@@ -1,13 +1,5 @@
 import { useState } from 'react';
-import {
-  Wrapper,
-  Title,
-  InfoWrapper,
-  Head,
-  Item,
-  Name,
-  Score,
-} from './TopPlayers.styled';
+import { Wrapper, Title, Item, Name } from './TopPlayers.styled';
 
 const MockPlayers = [
   { nickname: 'Paul', score: 371 },
@@ -23,23 +15,20 @@ const MockPlayers = [
 ];
 
 export const TopPlayers = () => {
-  const [players, setPlayrs] = useState(MockPlayers);
+  const [players] = useState(MockPlayers);
   return (
     <Wrapper>
       <Title>Top players</Title>
-      <InfoWrapper>
-        <Head></Head>
-        <ul>
-          {players.map(({ nickname, score }) => (
-            <Item>
-              <Name>
-                {nickname.length > 9 ? `${nickname.slice(0, 9)}...` : nickname}
-              </Name>
-              <Score>{score}</Score>
-            </Item>
-          ))}
-        </ul>
-      </InfoWrapper>
+      <ul>
+        {players.map(({ nickname, score }, idx) => (
+          <Item key={`${nickname}-${score}-${idx}`}>
+            <Name>
+              {nickname.length > 9 ? `${nickname.slice(0, 9)}...` : nickname}
+            </Name>
+            <span>{score}</span>
+          </Item>
+        ))}
+      </ul>
     </Wrapper>
   );
 };

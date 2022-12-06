@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Cell } from 'components/Cell/Cell';
 import { Board, Info, Wrapper, Button } from './GameBoard.styled';
+import { Movement } from 'components/Movement/Movement';
 
 export const GameBoard = ({
   rows,
@@ -10,6 +11,7 @@ export const GameBoard = ({
   isActive,
   handleActive,
   nickname,
+  isPaused,
 }) => {
   const initialState = {
     row: Math.floor((rows - 1) / 2),
@@ -27,7 +29,6 @@ export const GameBoard = ({
 
   // Movement speed increasing
   useEffect(() => {
-    console.log(score);
     if (Math.floor(score / 50) === level) {
       setLevel(level + 1);
       setTickTime(tickTime * 0.9);
@@ -95,46 +96,41 @@ export const GameBoard = ({
     setGrid(gridArray);
   }, [rows, cols, food, head, body]);
 
-  // Movement creating
-  useEffect(() => {
-    const NextCellCalculate = () => {
-      const newCell = {};
-      if (direction === 'right') {
-        const newCol = head.col + 1;
-        newCell.row = head.row;
-        newCell.col = newCol === cols ? 0 : newCol;
-      } else if (direction === 'left') {
-        const newCol = head.col - 1;
-        newCell.row = head.row;
-        newCell.col = newCol < 0 ? cols - 1 : newCol;
-      } else if (direction === 'top') {
-        const newRow = head.row - 1;
-        newCell.row = newRow < 0 ? rows - 1 : newRow;
-        newCell.col = head.col;
-      } else if (direction === 'bottom') {
-        const newRow = head.row + 1;
-        newCell.row = newRow === rows ? 0 : newRow;
-        newCell.col = head.col;
-      }
+  // Movement creating function
+  const NextCellCalculate = () => {
+    const newCell = {};
+    if (direction === 'right') {
+      const newCol = head.col + 1;
+      newCell.row = head.row;
+      newCell.col = newCol === cols ? 0 : newCol;
+    } else if (direction === 'left') {
+      const newCol = head.col - 1;
+      newCell.row = head.row;
+      newCell.col = newCol < 0 ? cols - 1 : newCol;
+    } else if (direction === 'top') {
+      const newRow = head.row - 1;
+      newCell.row = newRow < 0 ? rows - 1 : newRow;
+      newCell.col = head.col;
+    } else if (direction === 'bottom') {
+      const newRow = head.row + 1;
+      newCell.row = newRow === rows ? 0 : newRow;
+      newCell.col = head.col;
+    }
 
-      let newBody = [];
-      if (snakeLength === 0) {
-        newBody = [];
-      } else if (snakeLength > body.length) {
-        newBody = [...body, { row: head.row, col: head.col }];
-      } else if (snakeLength === body.length) {
-        const shiftedBody = body;
-        shiftedBody.shift();
-        newBody = [...shiftedBody, { row: head.row, col: head.col }];
-      }
+    let newBody = [];
+    if (snakeLength === 0) {
+      newBody = [];
+    } else if (snakeLength > body.length) {
+      newBody = [...body, { row: head.row, col: head.col }];
+    } else if (snakeLength === body.length) {
+      const shiftedBody = body;
+      shiftedBody.shift();
+      newBody = [...shiftedBody, { row: head.row, col: head.col }];
+    }
 
-      setHead(newCell);
-      setBody(newBody);
-    };
-    const tickInterval = setInterval(() => NextCellCalculate(), tickTime);
-
-    return () => clearInterval(tickInterval);
-  }, [body, cols, direction, head, rows, snakeLength, tickTime]);
+    setHead(newCell);
+    setBody(newBody);
+  };
 
   // Controls
   useEffect(() => {
@@ -175,20 +171,29 @@ export const GameBoard = ({
   };
 
   return (
-    <Board>
-      {isActive &&
-        grid.map(({ row, col, status }) => (
-          <Cell key={`${row}-${col}`} status={status} foodScore={food.score} />
-        ))}
-      {!isActive && (
-        <Wrapper>
-          <Info>
-            Game over!
-            <br /> {nickname}, you got {score} points!
-          </Info>
-          <Button onClick={onPlayAgainClick}>Play again</Button>
-        </Wrapper>
+    <>
+      <Board>
+        {isActive &&
+          grid.map(({ row, col, status }) => (
+            <Cell
+              key={`${row}-${col}`}
+              status={status}
+              foodScore={food.score}
+            />
+          ))}
+        {!isActive && (
+          <Wrapper>
+            <Info>
+              Game over!
+              <br /> {nickname}, you got {score} points!
+            </Info>
+            <Button onClick={onPlayAgainClick}>Play again</Button>
+          </Wrapper>
+        )}
+      </Board>
+      {!isPaused && (
+        <Movement NextCellCalculate={NextCellCalculate} tickTime={tickTime} />
       )}
-    </Board>
+    </>
   );
 };
