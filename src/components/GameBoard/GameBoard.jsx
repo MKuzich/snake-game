@@ -1,15 +1,24 @@
 import { useState, useEffect } from 'react';
 import { Cell } from 'components/Cell/Cell';
-import { Board } from './GameBoard.styled';
+import { Board, Info, Wrapper, Button } from './GameBoard.styled';
 
-export const GameBoard = ({ rows, cols, increaseScore, score }) => {
+export const GameBoard = ({
+  rows,
+  cols,
+  changeScore,
+  score,
+  isActive,
+  handleActive,
+  nickname,
+}) => {
+  const initialState = {
+    row: Math.floor((rows - 1) / 2),
+    col: Math.floor((cols - 1) / 2),
+  };
   const [isBegin, setIsBegin] = useState(true);
   const [grid, setGrid] = useState([]);
   const [food, setFood] = useState(null);
-  const [head, setHead] = useState({
-    row: Math.floor((rows - 1) / 2),
-    col: Math.floor((cols - 1) / 2),
-  });
+  const [head, setHead] = useState(initialState);
   const [body, setBody] = useState([]);
   const [snakeLength, setSnakeLength] = useState(0);
   const [direction, setDirection] = useState('right');
@@ -53,13 +62,13 @@ export const GameBoard = ({ rows, cols, increaseScore, score }) => {
 
     if (food && head.row === food.row && head.col === food.col) {
       setSnakeLength(snakeLength + 1);
-      increaseScore(food.score);
+      changeScore(score + food.score);
       if (newFood.row === head.row && newFood.col === head.col) {
         newFood = getRandomFood();
       }
       setFood(newFood);
     }
-  }, [head, food, snakeLength, isBegin, rows, cols, increaseScore]);
+  }, [head, food, snakeLength, isBegin, rows, cols, changeScore, score]);
 
   // Grid creating
   useEffect(() => {
@@ -144,13 +153,42 @@ export const GameBoard = ({ rows, cols, increaseScore, score }) => {
     return () => {
       window.removeEventListener('keydown', handleArrowsKeys);
     };
-  }, []);
+  }, [direction]);
+
+  // Game over handling
+  useEffect(() => {
+    const isCrashing = body.some(
+      itm => itm.row === head.row && itm.col === head.col
+    );
+    if (isCrashing) {
+      handleActive(false);
+    }
+  }, [body, handleActive, head]);
+
+  // Play again handling
+  const onPlayAgainClick = () => {
+    setHead(initialState);
+    setSnakeLength(0);
+    setBody([]);
+    changeScore(0);
+    handleActive(true);
+  };
 
   return (
     <Board>
-      {grid.map(({ row, col, status }) => (
-        <Cell key={`${row}-${col}`} status={status} />
-      ))}
+      {isActive &&
+        grid.map(({ row, col, status }) => (
+          <Cell key={`${row}-${col}`} status={status} foodScore={food.score} />
+        ))}
+      {!isActive && (
+        <Wrapper>
+          <Info>
+            Game over!
+            <br /> {nickname}, you got {score} points!
+          </Info>
+          <Button onClick={onPlayAgainClick}>Play again</Button>
+        </Wrapper>
+      )}
     </Board>
   );
 };

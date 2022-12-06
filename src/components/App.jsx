@@ -4,9 +4,15 @@ import { GameBoard } from './GameBoard/GameBoard';
 
 export const App = () => {
   const [score, setScore] = useState(0);
+  const [nickname, setNickname] = useState('Player');
+  const [isActive, setIsActive] = useState(true);
 
-  const increaseScore = value => {
-    setScore(score + value);
+  const changeScore = value => {
+    setScore(value);
+  };
+
+  const handleActive = value => {
+    setIsActive(value);
   };
   return (
     <>
@@ -14,8 +20,11 @@ export const App = () => {
       <GameBoard
         rows={20}
         cols={20}
-        increaseScore={increaseScore}
+        changeScore={changeScore}
         score={score}
+        isActive={isActive}
+        handleActive={handleActive}
+        nickname={nickname}
       />
     </>
   );
