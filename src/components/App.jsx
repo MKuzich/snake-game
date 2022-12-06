@@ -5,11 +5,13 @@ import { Container } from './Container/Container';
 import { SideBar } from './SideBar/SideBar';
 import { TitleBar } from './TitleBar/TitleBar';
 import { TopPlayers } from './TopPlayers/TopPlayers';
+import { NicknameModal } from './NicknameModal/NicknameModal';
 
 export const App = () => {
   const [score, setScore] = useState(0);
   const [nickname, setNickname] = useState('Player');
   const [isActive, setIsActive] = useState(true);
+  const [showModal, setShowModal] = useState(true);
 
   const changeScore = value => {
     setScore(value);
@@ -36,6 +38,12 @@ export const App = () => {
           <TopPlayers />
         </SideBar>
       </Container>
+      {showModal && (
+        <NicknameModal
+          closeModal={() => setShowModal(null)}
+          setNickname={setNickname}
+        />
+      )}
     </>
   );
 };
