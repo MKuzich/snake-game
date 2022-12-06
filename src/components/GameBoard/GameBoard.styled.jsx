@@ -3,7 +3,6 @@ import styled from 'styled-components';
 export const Board = styled.div`
   width: 400px;
   height: 400px;
-  margin: 100px auto;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -29,8 +28,9 @@ export const Wrapper = styled.div`
 
 export const Button = styled.button`
   color: #f2f5f3;
+  font-weight: 700;
   background-color: #343738;
-  border: 1px solid #f2f5f3;
+  border: 2px solid #f2f5f3;
   text-transform: uppercase;
   border-radius: 4px;
   margin-top: 10px;
