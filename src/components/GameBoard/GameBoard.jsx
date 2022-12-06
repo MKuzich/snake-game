@@ -26,6 +26,16 @@ export const GameBoard = ({
   const [direction, setDirection] = useState('right');
   const [tickTime, setTickTime] = useState(500);
   const [level, setLevel] = useState(1);
+  const [message, setMessage] = useState('Game over!');
+
+  // Victory condition
+  useEffect(() => {
+    const gridSize = rows * cols;
+    if (gridSize - 1 === snakeLength) {
+      setMessage('You got maximum points for this try!');
+      handleActive(false);
+    }
+  }, [cols, handleActive, rows, snakeLength]);
 
   // Movement speed increasing
   useEffect(() => {
@@ -157,6 +167,7 @@ export const GameBoard = ({
       itm => itm.row === head.row && itm.col === head.col
     );
     if (isCrashing) {
+      setMessage('Game over!');
       handleActive(false);
     }
   }, [body, handleActive, head]);
@@ -184,7 +195,7 @@ export const GameBoard = ({
         {!isActive && (
           <Wrapper>
             <Info>
-              Game over!
+              {message}
               <br /> {nickname}, you got {score} points!
             </Info>
             <Button onClick={onPlayAgainClick}>Play again</Button>

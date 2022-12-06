@@ -10,8 +10,6 @@ const MockPlayers = [
   { nickname: 'Paul', score: 371 },
   { nickname: 'Paul', score: 371 },
   { nickname: 'Paul', score: 371 },
-  { nickname: 'Paul', score: 371 },
-  { nickname: 'Paul', score: 371 },
 ];
 
 export const TopPlayers = () => {

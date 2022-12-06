@@ -11,7 +11,12 @@ import { createPortal } from 'react-dom';
 
 const modalRoot = document.querySelector('#modal-root');
 
-export const NicknameModal = ({ closeModal, setNickname, setIsPaused }) => {
+export const NicknameModal = ({
+  closeModal,
+  setNickname,
+  setIsPaused,
+  title,
+}) => {
   useEffect(() => {
     const handleKeyDown = e => {
       if (e.code === 'Escape') {
@@ -32,7 +37,8 @@ export const NicknameModal = ({ closeModal, setNickname, setIsPaused }) => {
 
   const onSubmitHandler = e => {
     e.preventDefault();
-    setNickname(e.target.elements.nickname.value);
+    const printedName = e.target.elements.nickname.value;
+    setNickname(printedName === '' ? 'Player' : printedName);
     setIsPaused(false);
     closeModal();
   };
@@ -40,7 +46,7 @@ export const NicknameModal = ({ closeModal, setNickname, setIsPaused }) => {
   return createPortal(
     <Overlay onClick={handleBackdropClick}>
       <ModalWindow>
-        <Title>Welcome to snake game. Introduce yourself, please!</Title>
+        <Title>{title}</Title>
         <Form onSubmit={onSubmitHandler}>
           <Input name="nickname" placeholder="Enter your nickname..." />
           <Button type="submit">Go!</Button>

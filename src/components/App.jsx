@@ -13,6 +13,9 @@ export const App = () => {
   const [isActive, setIsActive] = useState(true);
   const [isPaused, setIsPaused] = useState(true);
   const [showModal, setShowModal] = useState(true);
+  const [modalTitle, setModalTitle] = useState(
+    'Welcome to snake game. Introduce yourself, please!'
+  );
 
   const changeScore = value => {
     setScore(value);
@@ -41,6 +44,8 @@ export const App = () => {
             score={score}
             isPaused={isPaused}
             setIsPaused={setIsPaused}
+            setShowModal={setShowModal}
+            setModalTitle={setModalTitle}
           />
           <TopPlayers />
         </SideBar>
@@ -50,6 +55,7 @@ export const App = () => {
           closeModal={() => setShowModal(null)}
           setNickname={setNickname}
           setIsPaused={setIsPaused}
+          title={modalTitle}
         />
       )}
     </>
