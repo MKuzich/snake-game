@@ -1,32 +1,23 @@
-import { useState } from 'react';
-import { Wrapper, Title, Item, Name } from './TopPlayers.styled';
+import { Wrapper, Title, Item, Name, Info } from './TopPlayers.styled';
 
-const MockPlayers = [
-  { nickname: 'Paul', score: 371 },
-  { nickname: 'WWWWWWWWWW', score: 371 },
-  { nickname: 'Paul', score: 371 },
-  { nickname: 'Paul', score: 371 },
-  { nickname: 'Paul', score: 371 },
-  { nickname: 'Paul', score: 371 },
-  { nickname: 'Paul', score: 371 },
-  { nickname: 'Paul', score: 371 },
-];
-
-export const TopPlayers = () => {
-  const [players] = useState(MockPlayers);
+export const TopPlayers = ({ players }) => {
   return (
     <Wrapper>
       <Title>Top players</Title>
-      <ul>
-        {players.map(({ nickname, score }, idx) => (
-          <Item key={`${nickname}-${score}-${idx}`}>
-            <Name>
-              {nickname.length > 9 ? `${nickname.slice(0, 9)}...` : nickname}
-            </Name>
-            <span>{score}</span>
-          </Item>
-        ))}
-      </ul>
+      {players.length !== 0 ? (
+        <ul>
+          {players.map(({ nickname, score }, idx) => (
+            <Item key={`${nickname}-${score}-${idx}`}>
+              <Name>
+                {nickname.length > 9 ? `${nickname.slice(0, 9)}...` : nickname}
+              </Name>
+              <span>{score}</span>
+            </Item>
+          ))}
+        </ul>
+      ) : (
+        <Info>Nobody played yet</Info>
+      )}
     </Wrapper>
   );
 };

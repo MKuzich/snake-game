@@ -27,3 +27,9 @@ export const Name = styled.span`
   font-weight: 700;
   width: 180px;
 `;
+
+export const Info = styled.p`
+  color: #f2f5f3;
+  font-size: 18px;
+  padding: 4px 0;
+`;

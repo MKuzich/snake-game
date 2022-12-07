@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GlobalStyle } from './GlobalStyle';
 import { GameBoard } from './GameBoard/GameBoard';
 import { Container } from './Container/Container';
@@ -6,6 +6,8 @@ import { SideBar } from './SideBar/SideBar';
 import { TitleBar } from './TitleBar/TitleBar';
 import { TopPlayers } from './TopPlayers/TopPlayers';
 import { NicknameModal } from './NicknameModal/NicknameModal';
+import { getPlayers, addPlayer } from 'service/playersApi';
+import { toast } from 'react-toastify';
 
 export const App = () => {
   const [score, setScore] = useState(0);
@@ -16,6 +18,29 @@ export const App = () => {
   const [modalTitle, setModalTitle] = useState(
     'Welcome to snake game. Introduce yourself, please!'
   );
+  const [players, setPlayers] = useState([]);
+
+  useEffect(() => {
+    const getTopPlayers = async () => {
+      try {
+        const response = await getPlayers();
+        setPlayers(response);
+      } catch (error) {
+        toast.error(error.message);
+      }
+    };
+    if (score === 0) {
+      getTopPlayers();
+    }
+  }, [score]);
+
+  const addPlayerScore = async () => {
+    try {
+      await addPlayer({ nickname, score });
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   const changeScore = value => {
     setScore(value);
@@ -37,6 +62,7 @@ export const App = () => {
           handleActive={handleActive}
           nickname={nickname}
           isPaused={isPaused}
+          addPlayerScore={addPlayerScore}
         />
         <SideBar>
           <TitleBar
@@ -47,7 +73,7 @@ export const App = () => {
             setShowModal={setShowModal}
             setModalTitle={setModalTitle}
           />
-          <TopPlayers />
+          <TopPlayers players={players} />
         </SideBar>
       </Container>
       {showModal && (

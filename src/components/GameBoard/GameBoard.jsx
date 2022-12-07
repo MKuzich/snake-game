@@ -12,6 +12,7 @@ export const GameBoard = ({
   handleActive,
   nickname,
   isPaused,
+  addPlayerScore,
 }) => {
   const initialState = {
     row: Math.floor((rows - 1) / 2),
@@ -33,9 +34,10 @@ export const GameBoard = ({
     const gridSize = rows * cols;
     if (gridSize - 1 === snakeLength) {
       setMessage('You got maximum points for this try!');
+      addPlayerScore();
       handleActive(false);
     }
-  }, [cols, handleActive, rows, snakeLength]);
+  }, [addPlayerScore, cols, handleActive, rows, snakeLength]);
 
   // Movement speed increasing
   useEffect(() => {
@@ -64,7 +66,12 @@ export const GameBoard = ({
     };
     let newFood = getRandomFood();
     if (isBegin) {
-      if (newFood.row === head.row && newFood.col === head.col) {
+      const firstCondition =
+        newFood.row === head.row && newFood.col === head.col;
+      const secondCondition = body.some(
+        itm => itm.row === newFood.row && itm.col === newFood.col
+      );
+      while (firstCondition || secondCondition) {
         newFood = getRandomFood();
       }
       setFood(newFood);
@@ -79,7 +86,7 @@ export const GameBoard = ({
       }
       setFood(newFood);
     }
-  }, [head, food, snakeLength, isBegin, rows, cols, changeScore, score]);
+  }, [head, food, snakeLength, isBegin, rows, cols, changeScore, score, body]);
 
   // Grid creating
   useEffect(() => {
@@ -168,14 +175,16 @@ export const GameBoard = ({
     );
     if (isCrashing) {
       setMessage('Game over!');
+      addPlayerScore();
       handleActive(false);
     }
-  }, [body, handleActive, head]);
+  }, [addPlayerScore, body, handleActive, head]);
 
   // Play again handling
   const onPlayAgainClick = () => {
     setHead(initialState);
     setSnakeLength(0);
+    setLevel(1);
     setBody([]);
     changeScore(0);
     handleActive(true);
