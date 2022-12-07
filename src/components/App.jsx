@@ -42,7 +42,7 @@ export const App = () => {
         toast.error(error.message);
       }
     };
-    if (!isActive) {
+    if (!isActive && score !== 0) {
       addPlayerScore();
     }
   }, [isActive, nickname, score]);
