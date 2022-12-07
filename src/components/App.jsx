@@ -34,13 +34,18 @@ export const App = () => {
     }
   }, [score]);
 
-  const addPlayerScore = async () => {
-    try {
-      await addPlayer({ nickname, score });
-    } catch (error) {
-      toast.error(error.message);
+  useEffect(() => {
+    const addPlayerScore = async () => {
+      try {
+        await addPlayer({ nickname, score });
+      } catch (error) {
+        toast.error(error.message);
+      }
+    };
+    if (!isActive) {
+      addPlayerScore();
     }
-  };
+  }, [isActive, nickname, score]);
 
   const changeScore = value => {
     setScore(value);
@@ -62,7 +67,6 @@ export const App = () => {
           handleActive={handleActive}
           nickname={nickname}
           isPaused={isPaused}
-          addPlayerScore={addPlayerScore}
         />
         <SideBar>
           <TitleBar

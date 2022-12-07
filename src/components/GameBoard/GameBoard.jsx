@@ -12,7 +12,6 @@ export const GameBoard = ({
   handleActive,
   nickname,
   isPaused,
-  addPlayerScore,
 }) => {
   const initialState = {
     row: Math.floor((rows - 1) / 2),
@@ -34,10 +33,9 @@ export const GameBoard = ({
     const gridSize = rows * cols;
     if (gridSize - 1 === snakeLength) {
       setMessage('You got maximum points for this try!');
-      addPlayerScore();
       handleActive(false);
     }
-  }, [addPlayerScore, cols, handleActive, rows, snakeLength]);
+  }, [cols, handleActive, rows, snakeLength]);
 
   // Movement speed increasing
   useEffect(() => {
@@ -175,10 +173,9 @@ export const GameBoard = ({
     );
     if (isCrashing) {
       setMessage('Game over!');
-      addPlayerScore();
       handleActive(false);
     }
-  }, [addPlayerScore, body, handleActive, head]);
+  }, [body, handleActive, head]);
 
   // Play again handling
   const onPlayAgainClick = () => {
